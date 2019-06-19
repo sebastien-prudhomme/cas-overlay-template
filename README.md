@@ -35,19 +35,13 @@ To fetch and overlay a CAS resource or view, use:
 ./gradlew[.bat] getResource -PresourceName=[resource-name]
 ```
 
-To build a CAS Docker image via jib, use:
-
-```bash
-./gradlew[.bat] clean build jibDockerBuild
-```
-
 To list all available CAS views and templates:
 
 ```bash
 ./gradlew[.bat] listTemplateViews
 ```
 
-To unzip and explode the CAS web application file:
+To unzip and explode the CAS web application file and the internal resources jar:
 
 ```bash
 ./gradlew[.bat] explodeWar
@@ -128,3 +122,25 @@ Run the CAS web application as a *standalone* executable WAR:
 ## External
 
 Deploy the binary web application file `cas.war` after a successful build to a servlet container of choice.
+
+## Docker
+
+The following strategies outline how to build and deploy CAS Docker images.
+
+### Jib
+
+The overlay embraces the [Jib Gradle Plugin](https://github.com/GoogleContainerTools/jib) to provide easy-to-use out-of-the-box tooling for building CAS docker images. Jib is an open-source Java containerizer from Google that lets Java developers build containers using the tools they know. It is a container image builder that handles all the steps of packaging your application into a container image. It does not require you to write a Dockerfile or have Docker installed, and it is directly integrated into the overlay.
+
+```bash
+./gradlew build jibDockerBuild
+```
+
+### Dockerfile
+
+You can also use the native Docker tooling and the provided `Dockerfile` to build and run CAS.
+
+```bash
+chmod +x *.sh
+./docker-build.sh
+./docker-run.sh
+```
