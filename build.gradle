@@ -51,8 +51,9 @@ dependencies {
     compile "org.apereo.cas:cas-server-support-mongo-ticket-registry:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-oidc:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-pac4j-webflow:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-reports:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-saml:${casServerVersion}"
-    //compile "org.apereo.cas:cas-server-support-reports:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-sleuth:${casServerVersion}"
 }
 
 tasks.findByName("jibDockerBuild")
