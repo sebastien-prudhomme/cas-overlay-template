@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
+        gradlePluginPortal()
         mavenCentral()
         jcenter()
         maven { url "https://repo.spring.io/libs-milestone" }
@@ -12,6 +13,7 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
         classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
         classpath "io.freefair.gradle:maven-plugin:${project.gradleMavenPluginVersion}"
+        classpath "io.freefair.gradle:lombok-plugin:${project.gradleLombokPluginVersion}"
     }
 }
 
@@ -33,6 +35,7 @@ project.ext."casServerVersion" = casServerVersion
 project.ext."casWebApplicationBinaryName" = casWebApplicationBinaryName
 
 apply plugin: "io.freefair.war-overlay"
+apply plugin: "io.freefair.lombok"
 apply from: rootProject.file("gradle/tasks.gradle")
 
 apply plugin: "war"
@@ -44,18 +47,18 @@ apply from: rootProject.file("gradle/dockerjib.gradle")
 
 dependencies {
     // Other CAS dependencies/modules may be listed here...
-    compile "org.apereo.cas:cas-server-core-monitor:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-json-service-registry:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-ldap:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-ldap-monitor:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-metrics:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-mongo-monitor:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-mongo-ticket-registry:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-oidc:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-pac4j-webflow:${casServerVersion}"
-    //compile "org.apereo.cas:cas-server-support-reports:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-saml:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-support-sleuth:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-monitor:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-json-service-registry:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-ldap:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-ldap-monitor:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-metrics:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-mongo-monitor:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-mongo-ticket-registry:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-oidc:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-pac4j-webflow:${casServerVersion}"
+    //implementation "org.apereo.cas:cas-server-support-reports:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-saml:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-sleuth:${casServerVersion}"
 }
 
 tasks.findByName("jibDockerBuild")
@@ -65,7 +68,7 @@ tasks.findByName("jibDockerBuild")
 tasks.findByName("jib")
     .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
     .finalizedBy(deleteWebAppFromJib)
-    
+
 configurations.all {
     resolutionStrategy {
         cacheChangingModulesFor 0, "seconds"
@@ -92,25 +95,4 @@ idea {
         downloadJavadoc = true
         downloadSources = true
     }
-}
-
-bootWar {
-    entryCompression = ZipEntryCompression.STORED
-    overlays {
-        // https://docs.freefair.io/gradle-plugins/current/reference/#_io_freefair_war_overlay
-        // Note: The "excludes" property is only for files in the war dependency.
-        // If a jar is excluded from the war, it could be brought back into the final war as a dependency
-        // of non-war dependencies. Those should be excluded via normal gradle dependency exclusions.
-        cas {
-            from "org.apereo.cas:cas-server-webapp${project.appServer}:${casServerVersion}@war"
-            provided = false
-            //excludes = ["WEB-INF/lib/somejar-1.0*"]
-        }
-    }    
-}
-
-
-wrapper {
-    distributionType = Wrapper.DistributionType.BIN
-    gradleVersion = "${project.gradleVersion}"
 }
